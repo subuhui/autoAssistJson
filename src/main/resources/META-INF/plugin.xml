@@ -1,0 +1,74 @@
+<idea-plugin>
+    <id>com.xxz.plugin.AutoAssistJson</id>
+    <name>AutoAssistJson</name>
+    <vendor email="subuhuinew@gmail.com" url="https://github.com/subuhui/autoAssistJson/tree/main">
+        xxz
+    </vendor>
+    <description><![CDATA[
+     <br>基于json_serializable的辅助工具</br>
+     <br>使用方式有两种:</br>
+     <br>1.右键或快捷键进入Generate</br>
+     <br>2.idea菜单栏Build->AutoAssistJson</br>
+     <br>JsonSerializable选项</br>
+     <br>  生成json_serializable需要的代码,然后终端运行flutter pub run build_runner build --delete-conflicting-outputs命令</br>
+     <br>JsonSerializable-Generate选项</br>
+     <br>  只生成json_serializable需要的代码</br>
+     <br>JsonSerializable-Build选项</br>
+     <br>  只在终端运行flutter pub run build_runner build --delete-conflicting-outputs命令</br>
+     <br><a href="https://github.com/subuhui/autoAssistJson">See README.md for more details</a><br>
+    ]]></description>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.jetbrains.sh</depends>
+    <depends>Dart</depends>
+    <depends>io.flutter</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <action id="AutoAssistJson.BuildOnlyAction" class="com.xxz.actions.RunCommand"
+                text="JsonSerializable-Build"
+                description="only run 'flutter pub run build_runner build'.">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
+
+        <action id="AutoAssistJson.GenerateOnlyAction" class="com.xxz.actions.GenerateAction"
+                text="JsonSerializable-Generate"
+                description="only generate code that json_annotation or json_serializable needs.">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
+
+        <action id="AutoAssistJson.GenerateAndBuildAction" class="com.xxz.actions.GenerateAndBuildAction"
+                text="JsonSerializable"
+                description="generate code and run 'flutter pub run build_runner build'.">
+            <add-to-group group-id="GenerateGroup" anchor="first"/>
+        </action>
+
+        <group popup="true" text="AutoAssistJson" id="AutoAssistJson" description="OpenAPI">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+        </group>
+
+        <action id="AutoAssistJsonTerminal.GenerateAndBuildAction" class="com.xxz.actions.GenerateAndBuildAction"
+                text="JsonSerializable"
+                description="generate code and run 'flutter pub run build_runner build">
+            <add-to-group group-id="AutoAssistJson" anchor="last"/>
+        </action>
+
+        <action id="AutoAssistJsonTerminal.GenerateOnlyAction" class="com.xxz.actions.GenerateAction"
+                text="JsonSerializable-Generate"
+                description="only generate code that json_annotation or json_serializable needs.">
+            <add-to-group group-id="AutoAssistJson" anchor="last"/>
+        </action>
+
+        <action id="AutoAssistJsonTerminal.BuildOnlyAction" class="com.xxz.actions.RunCommand"
+                text="JsonSerializable-Build"
+                description="only run 'flutter pub run build_runner build.">
+            <add-to-group group-id="AutoAssistJson" anchor="last"/>
+        </action>
+
+    </actions>
+</idea-plugin>

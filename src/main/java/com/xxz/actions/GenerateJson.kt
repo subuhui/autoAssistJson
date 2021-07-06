@@ -1,0 +1,103 @@
+package com.xxz.actions
+
+import com.intellij.codeInsight.template.TemplateManager
+import com.intellij.openapi.actionSystem.AnAction
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.psi.util.elementType
+import com.intellij.refactoring.suggested.startOffset
+import com.jetbrains.lang.dart.DartTokenTypes
+import com.jetbrains.lang.dart.psi.DartClassDefinition
+import com.jetbrains.lang.dart.psi.DartFile
+import com.xxz.utils.CommandUtil
+import com.xxz.utils.DialogUtil
+import io.flutter.pub.PubRoot
+import org.yaml.snakeyaml.Yaml
+import java.io.FileInputStream
+
+
+open class GenerateJson : AnAction() {
+    private var fileName: String? = ""
+    private var mIndex = -1
+    protected var isRunCommand = false
+    protected var isRunGenerate = false
+    override fun actionPerformed(e: AnActionEvent) {
+        if (!isExistJsonSerializable(e)) {
+            DialogUtil.showInfo("The project needs to depend on json_serializable,build_runner")
+            return
+        }
+        val file = e.getData(CommonDataKeys.PSI_FILE)
+        val editor = e.getData(CommonDataKeys.EDITOR)
+        fileName = file?.name?.replace(".dart", "")
+        assert(editor != null)
+        val templateManager = TemplateManager.getInstance(e.project)
+        if (file != null && file.name.contains(".dart")) {
+            if (isRunGenerate) {
+                val dartFile = file as DartFile
+                dartFile.children.forEachIndexed { index, classChild ->
+                    if (classChild.elementType == DartTokenTypes.CLASS_DEFINITION) {
+                        editor?.caretModel?.moveToOffset(classChild.startOffset)
+                        val template = templateManager.createTemplate(this.javaClass.name, "Dart")
+                        template.isToReformat = true
+                        if (mIndex == -1) {
+                            mIndex = index
+                            template.addTextSegment("import 'package:json_annotation/json_annotation.dart';\n")
+                            template.addTextSegment("part '$fileName.g.dart';\n")
+                        }
+                        template.addTextSegment("@JsonSerializable()\n")
+                        editor?.let { templateManager.startTemplate(it, template) }
+                        val className = (classChild as DartClassDefinition).componentName.name
+                        for (bodyChild in classChild.children) {
+                            if (bodyChild.elementType == DartTokenTypes.CLASS_BODY) {
+                                editor?.caretModel?.moveToOffset(bodyChild.lastChild.startOffset)
+                                val methodTemplate = templateManager.createTemplate(this.javaClass.name, "Dart")
+                                methodTemplate.isToReformat = true
+                                methodTemplate.addTextSegment("factory $className.fromJson(Map<String, dynamic> json) => _${"$"}${className}FromJson(json);\n")
+                                methodTemplate.addTextSegment("Map<String, dynamic> toJson() => _${"$"}${className}ToJson(this);\n")
+                                editor?.let { templateManager.startTemplate(it, methodTemplate) }
+                            }
+                        }
+                    }
+                }
+            }
+            if (isRunCommand) {
+                CommandUtil.runFlutterPubRun(
+                    e,
+                    PubRoot.forFile(e.project?.projectFile ?: e.project?.workspaceFile)?.path
+                )
+            }
+        } else {
+            DialogUtil.showInfo("AutoAssistJson: Can not find any Class.")
+        }
+    }
+
+    private fun isExistJsonSerializable(e: AnActionEvent): Boolean {
+        var isExist = false
+        PubRoot.forFile(e.project?.projectFile ?: e.project?.workspaceFile)?.let { pubRoot ->
+            FileInputStream(pubRoot.pubspec.path).use { inputStream ->
+                (Yaml().load(inputStream) as? Map<String, Any>)?.let { map ->
+                    val dependencies = map["dev_dependencies"];
+                    if (dependencies is Map<*, *>) {
+                        isExist = dependencies["json_serializable"] != null && dependencies["build_runner"] != null
+                    }
+                }
+            }
+        }
+        return isExist
+    }
+
+    override fun update(e: AnActionEvent) {
+        super.update(e)
+        e.presentation.isEnabled = false
+        val project = e.project
+        if (project != null) {
+            val file = e.getData(CommonDataKeys.PSI_FILE)
+            if (file != null) {
+                val fileName = file.name
+                if (fileName.contains(".dart")) {
+                    e.presentation.isEnabled = true
+                }
+            }
+        }
+    }
+}
