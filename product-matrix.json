@@ -10,8 +10,8 @@
   "202.7660.26": {
     "comments": "IntelliJ 2020.2.3, Android Studio 4.2",
     "ideaVersion": "202.6987402",
-    "dartPluginVersion": "202.8070",
-    "flutterPluginVersion": "57.0.2",
+    "dartPluginVersion": "202.8531",
+    "flutterPluginVersion": "58.0.1",
     "sinceBuild": "202.7660.26",
     "untilBuild": "202.*"
   },
