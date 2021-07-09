@@ -5,16 +5,16 @@
         xxz
     </vendor>
     <description><![CDATA[
-     <br>基于json_serializable的辅助工具</br>
-     <br>使用方式有两种:</br>
-     <br>1.右键或快捷键进入Generate</br>
-     <br>2.idea菜单栏Build->AutoAssistJson</br>
-     <br>JsonSerializable选项</br>
-     <br>  生成json_serializable需要的代码,然后终端运行flutter pub run build_runner build --delete-conflicting-outputs命令</br>
-     <br>JsonSerializable-Generate选项</br>
-     <br>  只生成json_serializable需要的代码</br>
-     <br>JsonSerializable-Build选项</br>
-     <br>  只在终端运行flutter pub run build_runner build --delete-conflicting-outputs命令</br>
+     <p>Auxiliary tool based on json_serializable</p>
+     <br>There are two ways to use:</br>
+     <br>1. Right click or shortcut key to enter Generate</br>
+     <br>2.idea menu bar Build->AutoAssistJson</br>
+     <br>JsonSerializable option</br>
+     <br> Generate the code required by json_serializable, and then run the flutter pub run build_runner build --delete-conflicting-outputs command in the terminal</br>
+     <br>JsonSerializable-Generate option</br>
+     <br> Only generate the code needed by json_serializable</br>
+     <br>JsonSerializable-Build option</br>
+     <br> Only run flutter pub run build_runner build --delete-conflicting-outputs command in the terminal</br>
      <br><a href="https://github.com/subuhui/autoAssistJson">See README.md for more details</a><br>
     ]]></description>
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html

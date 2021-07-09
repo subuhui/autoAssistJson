@@ -18,6 +18,10 @@ plugins {
 
 }
 
+publishPlugin {
+    publishPlugin.host = 'http://10.10.17.105/'
+}
+
 group 'com.xxz'
 version pluginVersion + '-' + ideaVersion
 
