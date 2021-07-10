@@ -5,9 +5,9 @@
         xxz
     </vendor>
     <description><![CDATA[
-     <p>Auxiliary tool based on json_serializable</p>
-     <br>There are two ways to use:</br>
-     <br>1. Right click or shortcut key to enter Generate</br>
+     <p>auxiliary tool based on json_serializable</p>
+     <br>there are two ways to use:</br>
+     <br>1. right click or shortcut key to enter Generate</br>
      <br>2.idea menu bar Build->AutoAssistJson</br>
      <br>JsonSerializable option</br>
      <br> Generate the code required by json_serializable, and then run the flutter pub run build_runner build --delete-conflicting-outputs command in the terminal</br>
@@ -17,6 +17,11 @@
      <br> Only run flutter pub run build_runner build --delete-conflicting-outputs command in the terminal</br>
      <br><a href="https://github.com/subuhui/autoAssistJson">See README.md for more details</a><br>
     ]]></description>
+    <change-notes><![CDATA[
+       <br>update dart dependency version</br>
+       <br>update io.flutter dependency version</br>
+    ]]>
+    </change-notes>
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
     <depends>com.intellij.modules.platform</depends>
