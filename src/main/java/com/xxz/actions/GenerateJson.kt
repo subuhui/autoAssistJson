@@ -1,9 +1,11 @@
 package com.xxz.actions
 
+import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.DartTokenTypes
@@ -41,10 +43,16 @@ open class GenerateJson : AnAction() {
                         template.isToReformat = true
                         if (mIndex == -1) {
                             mIndex = index
-                            template.addTextSegment("import 'package:json_annotation/json_annotation.dart';\n")
-                            template.addTextSegment("part '$fileName.g.dart';\n")
+                            if(!dartFile.text.contains("import 'package:json_annotation/json_annotation.dart';")){
+                                template.addTextSegment("import 'package:json_annotation/json_annotation.dart';\n")
+                            }
+                            if(!dartFile.text.contains("part '$fileName.g.dart';")){
+                                template.addTextSegment("part '$fileName.g.dart';\n")
+                            }
                         }
-                        template.addTextSegment("@JsonSerializable()\n")
+                        if(!classChild.text.contains("@JsonSerializable()")){
+                            template.addTextSegment("@JsonSerializable()\n")
+                        }
                         editor?.let { templateManager.startTemplate(it, template) }
                         val className = (classChild as DartClassDefinition).componentName.name
                         for (bodyChild in classChild.children) {
@@ -52,11 +60,18 @@ open class GenerateJson : AnAction() {
                                 editor?.caretModel?.moveToOffset(bodyChild.lastChild.startOffset)
                                 val methodTemplate = templateManager.createTemplate(this.javaClass.name, "Dart")
                                 methodTemplate.isToReformat = true
-                                methodTemplate.addTextSegment("factory $className.fromJson(Map<String, dynamic> json) => _${"$"}${className}FromJson(json);\n")
-                                methodTemplate.addTextSegment("Map<String, dynamic> toJson() => _${"$"}${className}ToJson(this);\n")
+                                val fromJsonText = "factory $className.fromJson(Map<String, dynamic> json) => _${"$"}${className}FromJson(json);"
+                                val toJsonText = "Map<String, dynamic> toJson() => _${"$"}${className}ToJson(this);"
+                                if(!bodyChild.text.contains(fromJsonText)){
+                                    methodTemplate.addTextSegment("$fromJsonText\n")
+                                }
+                                if(!bodyChild.text.contains(toJsonText)){
+                                    methodTemplate.addTextSegment("$toJsonText\n")
+                                }
                                 editor?.let { templateManager.startTemplate(it, methodTemplate) }
                             }
                         }
+                        editor?.let { templateManager.finishTemplate(it) }
                     }
                 }
             }
