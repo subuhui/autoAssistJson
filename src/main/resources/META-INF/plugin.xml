@@ -18,8 +18,15 @@
      <br><a href="https://github.com/subuhui/autoAssistJson">See README.md for more details</a><br>
     ]]></description>
     <change-notes><![CDATA[
-       <br>update dart dependency version</br>
-       <br>update io.flutter dependency version</br>
+<h1>1.0.2</h1>
+<ul>
+  <li>update whether the text exists</li>
+</ul>
+<h1>1.0.1</h1>
+<ul>
+  <li>update dart dependency version</li>
+  <li>update io.flutter dependency version</li>
+</ul>
     ]]>
     </change-notes>
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html

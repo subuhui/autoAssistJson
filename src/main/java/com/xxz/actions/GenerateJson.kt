@@ -62,10 +62,10 @@ open class GenerateJson : AnAction() {
                                 methodTemplate.isToReformat = true
                                 val fromJsonText = "factory $className.fromJson(Map<String, dynamic> json) => _${"$"}${className}FromJson(json);"
                                 val toJsonText = "Map<String, dynamic> toJson() => _${"$"}${className}ToJson(this);"
-                                if(!bodyChild.text.contains(fromJsonText)){
+                                if(!bodyChild.text.contains("$className.fromJson")){
                                     methodTemplate.addTextSegment("$fromJsonText\n")
                                 }
-                                if(!bodyChild.text.contains(toJsonText)){
+                                if(!bodyChild.text.contains("toJson")){
                                     methodTemplate.addTextSegment("$toJsonText\n")
                                 }
                                 editor?.let { templateManager.startTemplate(it, methodTemplate) }
