@@ -1,18 +1,17 @@
 package com.xxz.actions
 
-import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.intellij.refactoring.suggested.startOffset
 import com.jetbrains.lang.dart.DartTokenTypes
 import com.jetbrains.lang.dart.psi.DartClassDefinition
 import com.jetbrains.lang.dart.psi.DartFile
-import com.xxz.utils.CommandUtil
+import com.jetbrains.lang.dart.psi.DartVarAccessDeclaration
 import com.xxz.utils.DialogUtil
+import com.xxz.utils.PubRunUtils
 import io.flutter.pub.PubRoot
 import org.yaml.snakeyaml.Yaml
 import java.io.FileInputStream
@@ -43,14 +42,14 @@ open class GenerateJson : AnAction() {
                         template.isToReformat = true
                         if (mIndex == -1) {
                             mIndex = index
-                            if(!dartFile.text.contains("import 'package:json_annotation/json_annotation.dart';")){
+                            if (!dartFile.text.contains("import 'package:json_annotation/json_annotation.dart';")) {
                                 template.addTextSegment("import 'package:json_annotation/json_annotation.dart';\n")
                             }
-                            if(!dartFile.text.contains("part '$fileName.g.dart';")){
+                            if (!dartFile.text.contains("part '$fileName.g.dart';")) {
                                 template.addTextSegment("part '$fileName.g.dart';\n")
                             }
                         }
-                        if(!classChild.text.contains("@JsonSerializable()")){
+                        if (!classChild.text.contains("@JsonSerializable()")) {
                             template.addTextSegment("@JsonSerializable()\n")
                         }
                         editor?.let { templateManager.startTemplate(it, template) }
@@ -60,12 +59,34 @@ open class GenerateJson : AnAction() {
                                 editor?.caretModel?.moveToOffset(bodyChild.lastChild.startOffset)
                                 val methodTemplate = templateManager.createTemplate(this.javaClass.name, "Dart")
                                 methodTemplate.isToReformat = true
-                                val fromJsonText = "factory $className.fromJson(Map<String, dynamic> json) => _${"$"}${className}FromJson(json);"
+                                if (isRunCommand &&
+                                    !bodyChild.text.contains("$className(this.") &&
+                                    !bodyChild.text.contains("$className({")) {
+                                    val fields = arrayListOf<String>();
+                                    for (member in bodyChild.children) {
+                                        if (member.elementType == DartTokenTypes.CLASS_MEMBERS) {
+                                            for (varList in member.children) {
+                                                if (varList.elementType == DartTokenTypes.VAR_DECLARATION_LIST) {
+                                                    for (varAccess in varList.children) {
+                                                        if (varAccess.elementType == DartTokenTypes.VAR_ACCESS_DECLARATION) {
+                                                            fields.add("this.${(varAccess as DartVarAccessDeclaration).name.toString()}")
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    val constructorText = "$className(${fields.joinToString(separator = ", ")});"
+                                    methodTemplate.addTextSegment("$constructorText\n")
+                                }
+                                val fromJsonText =
+                                    "factory $className.fromJson(Map<String, dynamic> json) => _${"$"}${className}FromJson(json);"
                                 val toJsonText = "Map<String, dynamic> toJson() => _${"$"}${className}ToJson(this);"
-                                if(!bodyChild.text.contains("$className.fromJson")){
+
+                                if (!bodyChild.text.contains("$className.fromJson")) {
                                     methodTemplate.addTextSegment("$fromJsonText\n")
                                 }
-                                if(!bodyChild.text.contains("toJson")){
+                                if (!bodyChild.text.contains("toJson")) {
                                     methodTemplate.addTextSegment("$toJsonText\n")
                                 }
                                 editor?.let { templateManager.startTemplate(it, methodTemplate) }
@@ -76,10 +97,11 @@ open class GenerateJson : AnAction() {
                 }
             }
             if (isRunCommand) {
-                CommandUtil.runFlutterPubRun(
-                    e,
-                    PubRoot.forFile(e.project?.projectFile ?: e.project?.workspaceFile)?.path
-                )
+//                CommandUtil.runFlutterPubRun(
+//                    e,
+//                    PubRoot.forFile(e.project?.projectFile ?: e.project?.workspaceFile)?.path
+//                )
+                PubRunUtils.runFlutterPubRun(e)
             }
         } else {
             DialogUtil.showInfo("AutoAssistJson: Can not find any Class.")

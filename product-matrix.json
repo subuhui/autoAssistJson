@@ -1,16 +1,16 @@
 {
-  "201.8538.31": {
-    "comments": "2020.1",
-    "ideaVersion": "201.8538.*",
-    "dartPluginVersion": "201.9380",
+  "201.7223.91": {
+    "comments": "IntelliJ 2020.1, Android Studio 4.1",
+    "ideaVersion": "201.6565218",
+    "dartPluginVersion": "201.7223.99",
     "flutterPluginVersion": "57.0.1",
-    "sinceBuild": "201.8538.31",
+    "sinceBuild": "201.7223",
     "untilBuild": "201.*"
   },
   "202.7660.26": {
-    "comments": "IntelliJ 2020.2.3, Android Studio 4.2",
+    "comments": "IntelliJ 2020.2, Android Studio 4.2",
     "ideaVersion": "202.6987402",
-    "dartPluginVersion": "202.8531",
+    "dartPluginVersion": "202.8070",
     "flutterPluginVersion": "58.0.1",
     "sinceBuild": "202.7660.26",
     "untilBuild": "202.*"
@@ -23,12 +23,12 @@
     "sinceBuild": "203.6682.168",
     "untilBuild": "203.*"
   },
-  "211.6693.111": {
+  "211.7628.21": {
     "comments": "2021.1",
-    "ideaVersion": "221.6693.*",
-    "dartPluginVersion": "211.7665",
+    "ideaVersion": "211.7628.21",
+    "dartPluginVersion": "211.7628.1",
     "flutterPluginVersion": "58.0.3",
-    "sinceBuild": "211.6693",
+    "sinceBuild": "211.6432.7",
     "untilBuild": "211.*"
   }
 }
